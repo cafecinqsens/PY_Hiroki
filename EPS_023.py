@@ -1,7 +1,3 @@
-'''
-누구나 파이썬 기초통계(타니아이 히로키, 한빛아카데미)
-23페이지
-'''
 import pandas as pd
 
 df = pd.read_csv('DataSet/sport_test.csv', index_col='학생번호')
