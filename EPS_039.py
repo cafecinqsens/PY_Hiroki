@@ -96,6 +96,124 @@ print(z)
 
 print(round(np.mean(z)), round(np.std(z, ddof=0)))
 
+# 2.3.2 편차값
+
+z = 50 + 10 * (scores - np.mean(scores)) / np.std(scores)
+
+print('편차값:', z)
+
+scores_df['deviation value'] = z
+
+print(scores_df)
 
 
+# Section 2.4 1차원 데이터의 시각화
 
+english_scores = np.array(df['english'])
+
+print(pd.Series(english_scores).describe())
+
+
+# 2.4.1 도수 분포표
+
+freq, _ = np.histogram(english_scores, bins=10, range=(0, 100))
+print(freq)
+
+# 문자열 리스트 작성
+freq_class= [f'{i}~{i+10}' for i in range(0, 100, 10)]
+
+# freq_class를 인덱스로 DataFrame을 작성
+freq_dist_df = pd.DataFrame({'frequency': freq}, index=pd.Index(freq_class, name='class'))
+
+print(freq_dist_df)
+
+
+# 계급값
+class_value = [(i+(i+10))//2 for i in range(0, 100, 10)]
+
+print('계급값 ->', class_value)
+
+# 상대도수
+rel_freq = freq / freq.sum()
+print('상대도수 ->', rel_freq)
+
+# 누적상대도수
+cum_rel_freq = np.cumsum(rel_freq)
+print('누적상대도수 ->', cum_rel_freq)
+
+# 도수분포표에 계급값과 상대도수, 누적상대도수 추가하기
+freq_dist_df['class value'] = class_value
+freq_dist_df['relative frequency'] = rel_freq
+freq_dist_df['cumulative relative frequency'] = cum_rel_freq
+freq_dist_df = freq_dist_df[['class value', 'frequency', 'relative frequency', 'cumulative relative frequency']]
+
+print('도수분포표 ->  \n', freq_dist_df)
+
+
+# 최빈값 재검토
+print('최빈값 ->', freq_dist_df.loc[freq_dist_df['frequency'].idxmax(), 'class value'])
+
+# 2.4.2 히스토그램
+
+# Matplotlib 라이브러리 사용하기
+import matplotlib.pyplot as plt
+
+# 캔버스를 생성하고 figsize로 가로, 세로 크기를 지정
+fig = plt.figure(figsize=(10, 6))
+
+# 그래프 그리기 위한 영역
+# 일반적으로 .add_subplot(행, 열, 위치)로 표현함
+# 예를 들어 .add_subplot(2, 2, 2)이면 2행 2열에 2번 위치에 그래프가 그려진다.
+'''
+위치값은...
+-------
+1  |  2
+--------
+3  |  4
+-------
+5  |  6
+--------
+...|  ...
+----------
+
+이런 식으로 위치값을 갖음
+'''''
+
+'''
+# 아래와 같이 컴마로 구분되지 않는 경우가 있는데
+# 1행 1열 1번 위치라는 것을 의미함
+ax1 = fig.add_subplot(111)
+ax2 = ax1.twinx()
+
+# 상대도수의 히스토그램으로 하기 위해서는, 도수를 데이터의 수로 나눌 필요가 있음
+weights = np.ones_like(english_scores) / len(english_scores)
+
+
+# 25의 간격으로 0부터 100까지의 히스토그램 작성
+rel_freq, _, _ = ax1.hist(english_scores, bins=25, range=(0, 100), weights=weights)
+
+cum_rel_freq = np.cumsum(rel_freq)
+
+class_value = [(i+(i+4))//2 for i in range(0, 100, 4)]
+
+ax2.plot(class_value, cum_rel_freq, ls='--', marker='o', color='grey')
+
+ax2.grid(visible=False)
+
+# x와 y축의 라벨 부여
+ax1.set_xlabel('score')
+ax1.set_ylabel('relative frequency')
+ax2.set_ylabel('cumulative relative frequency')
+
+# 등간격을 이용하여 눈금 적용
+ax1.set_xticks(np.linspace(0,100, 25+1))
+'''
+
+# 2.4.3 상자그림
+fig = plt.figure(figsize=(5, 6))
+
+ax = fig.add_subplot(111)
+ax.boxplot(english_scores, labels=['english'])
+
+# 그래프 표시
+plt.show()
