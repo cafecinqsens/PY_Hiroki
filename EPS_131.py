@@ -6,7 +6,7 @@ x_set = np.arange(2, 13)
 y_set = np.arange(1,7)
 
 # 결합확률함수를 정의
-def f_xy(x, y):
+def f_XY(x, y):
     if 1<= y <=6 and 1<= x - y <= 6:
         return y * (x -y) / 441
     else:
@@ -14,17 +14,19 @@ def f_xy(x, y):
 
 # 확률변수 (X, Y)의 움직임은 x_set, y_set, f_xy에 의해 정의되므로, 리스트 XY를 선언하여 저장
 
-XY = [x_set, y_set, f_xy]
+XY = [x_set, y_set, f_XY]
 
 
-prob = np.array([[f_xy(x_i, y_j) for y_j in y_set] for x_i in x_set])
+prob = np.array([[f_XY(x_i, y_j) for y_j in y_set] for x_i in x_set])
 
-mat = np.array([[f_xy(x_i, y_j) for y_j in y_set] for x_i in x_set]).shape()
+mat = np.array([[f_XY(x_i, y_j) for y_j in y_set] for x_i in x_set])
 
 fig = plt.figure(figsize=(10,8))
 ax = fig.add_subplot(111)
 
 c = ax.pcolor(prob)
+
+
 
 # 눈금 그리기(.shape[0] -> 행의 갯수, .shape[1] -> 열의 갯수)
 ax.set_xticks(np.arange(prob.shape[1]) + 0.5, minor=False)
